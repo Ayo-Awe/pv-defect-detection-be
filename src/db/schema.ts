@@ -22,7 +22,7 @@ export const detectionStatus = pgEnum("detection_status", ["done", "pending"]);
 export const users = pgTable("users", {
   id: serial("id").primaryKey().notNull(),
   email: varchar("email", { length: 255 }).notNull(),
-  password: varchar("password", { length: 100 }),
+  password: varchar("password", { length: 100 }).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -32,7 +32,9 @@ export const detections = pgTable("detections", {
   totalImages: integer("total_images").notNull(),
   progress: integer("progress").notNull(),
   status: detectionStatus("status").notNull(),
-  userId: integer("user_id").references(() => users.id),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
   reportId: integer("report_id").references(() => reports.id),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -46,7 +48,9 @@ export const images = pgTable("images", {
     .default([])
     .notNull()
     .$type<DefectPrediction[]>(),
-  detectionId: integer("detection_id").references(() => detections.id),
+  detectionId: integer("detection_id")
+    .references(() => detections.id)
+    .notNull(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

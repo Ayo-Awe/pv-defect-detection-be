@@ -1,0 +1,3 @@
+ALTER TABLE "detections" ALTER COLUMN "user_id" SET NOT NULL;
+ALTER TABLE "images" ALTER COLUMN "detection_id" SET NOT NULL;
+ALTER TABLE "users" ALTER COLUMN "password" SET NOT NULL;
