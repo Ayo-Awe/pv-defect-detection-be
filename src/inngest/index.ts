@@ -4,6 +4,7 @@ import db from "../db";
 import { DefectPrediction } from "../db/schema";
 import { randomInt } from "crypto";
 import { DetectionSetRepository } from "../repositories/detection";
+import { ReportRepository } from "../repositories/report";
 
 export const inngest = new Inngest({
   id: "pv-detection",
@@ -21,9 +22,7 @@ export const predictDetectionSetDefects = inngest.createFunction(
 
     const events = images.map((image) => ({
       name: "app/pv-images.predict",
-      data: {
-        image,
-      },
+      data: { image },
     }));
 
     await step.sendEvent("fanout-pv-defect-predictions", events);
@@ -95,4 +94,53 @@ export const predictDefectInPV = inngest.createFunction(
   }
 );
 
-export const functions = [predictDefectInPV, predictDetectionSetDefects];
+export const generateReport = inngest.createFunction(
+  { id: "generate-detection-set-report" },
+  { event: "app/detection-set.completed" },
+  async ({ event, step }) => {
+    const images = await step.run("fetch-images", async () => {
+      const imageRepo = new ImageRepository(db);
+      return imageRepo.getAllByDetectionSet(event.data.detectionSet.id);
+    });
+
+    const defectPredictions = images.reduce<DefectPrediction[]>(
+      (preds, image) => preds.concat(image.defectPredictions),
+      []
+    );
+
+    interface DefectClassAggregate {
+      [key: string]: number;
+    }
+
+    const defectClassAggregate = defectPredictions.reduce<{
+      summary: DefectClassAggregate;
+      total: number;
+    }>(
+      (aggregate, defectPrediction) => {
+        if (!aggregate.summary[defectPrediction.class]) {
+          aggregate.summary[defectPrediction.class] = 0;
+        }
+        aggregate.summary[defectPrediction.class] += 1;
+        aggregate.total++;
+        return aggregate;
+      },
+      { summary: {}, total: 0 }
+    );
+
+    const report = await step.run("create detection set report", async () => {
+      const reportRepo = new ReportRepository(db);
+      return await reportRepo.createReport(
+        event.data.detectionSet.id,
+        defectClassAggregate
+      );
+    });
+
+    return report;
+  }
+);
+
+export const functions = [
+  predictDefectInPV,
+  predictDetectionSetDefects,
+  generateReport,
+];
