@@ -4,6 +4,12 @@ import { z } from "zod";
 
 declare global {
   namespace Express {
+    namespace Multer {
+      interface File {
+        key: string;
+        location: string;
+      }
+    }
     export interface Response {
       ok(payload: any, meta?: any): Response;
       created(payload: any): Response;

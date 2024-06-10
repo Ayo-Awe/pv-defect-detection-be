@@ -1,5 +1,6 @@
 export type ResourceNotFoundErrorCode =
   | "RESOURCE_NOT_FOUND"
+  | "IMAGES_STILL_PROCESSING"
   | "UNKNOWN_ENDPOINT";
 
 export type BadRequestErrorCode =

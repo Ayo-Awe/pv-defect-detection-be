@@ -23,6 +23,8 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
       return next(new Unauthorized("Malformed token", "MALFORMED_TOKEN"));
     }
 
+    console.log(token);
+
     const payload = jwt.verify(token, process.env.JWT_SECRET) as {
       uid: number;
     };
@@ -47,6 +49,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     if (error instanceof TokenExpiredError) {
       next(new Unauthorized("Token expired", "EXPIRED_TOKEN"));
     } else if (error instanceof JsonWebTokenError) {
+      console.log(error);
       next(new Unauthorized("Token invalid", "INVALID_TOKEN"));
     } else {
       next(error);

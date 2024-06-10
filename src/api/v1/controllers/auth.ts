@@ -32,6 +32,7 @@ class AuthController {
       .returning();
 
     const accessToken = createAuthToken({ userId: user.id });
+    console.log(accessToken);
 
     res.ok({ user: { ...user, password: undefined }, accessToken });
   }

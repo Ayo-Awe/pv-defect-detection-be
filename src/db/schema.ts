@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   pgTable,
@@ -30,8 +31,8 @@ export const detections = pgTable("detections", {
   id: serial("id").primaryKey().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   totalImages: integer("total_images").notNull(),
-  progress: integer("progress").notNull(),
-  status: detectionStatus("status").notNull(),
+  totalPredictedImages: integer("total_predicted_images").notNull().default(0),
+  status: detectionStatus("status").notNull().default("pending"),
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
@@ -62,3 +63,10 @@ export const reports = pgTable("reports", {
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const detectionSetRelations = relations(detections, ({ one }) => ({
+  report: one(reports, {
+    fields: [detections.reportId],
+    references: [reports.id],
+  }),
+}));

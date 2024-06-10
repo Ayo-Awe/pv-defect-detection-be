@@ -4,6 +4,8 @@ export const envSchema = z.object({
   PORT: z.string().optional(),
   DB_URL: z.string(),
   JWT_SECRET: z.string(),
+  S3_ACCESS_KEY: z.string(),
+  S3_SECRET_KEY: z.string(),
 });
 
 try {

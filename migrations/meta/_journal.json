@@ -15,6 +15,20 @@
       "when": 1717878720172,
       "tag": "0001_blushing_scarecrow",
       "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1717885273784,
+      "tag": "0002_flaky_hulk",
+      "breakpoints": false
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1717932764460,
+      "tag": "0003_flaky_wendell_rand",
+      "breakpoints": false
     }
   ]
 }
