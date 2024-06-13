@@ -8,7 +8,8 @@
     "start": "node ./dist/server.js",
     "build": "tsc",
     "db:migrate": "ts-node ./src/db/migrate",
-    "db:generate": "drizzle-kit generate:pg"
+    "db:generate": "drizzle-kit generate:pg",
+    "build:production": "npm install --production=false && npm run build && npm ci"
   },
   "keywords": [],
   "author": "",
