@@ -7,11 +7,12 @@ import {
 } from "express";
 
 export function ErrorWrapper(handler: RequestHandler) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      handler(req, res, next);
+      await handler(req, res, next);
     } catch (error) {
-      next(error);
+      console.log("hello");
+      return next(error);
     }
   };
 }

@@ -9,7 +9,7 @@ import v1Router from "./api/v1/routes";
 import { functions, inngest } from "./inngest";
 
 const app = express();
-const whitelist = ["http://localhost:3000", "*"];
+const whitelist = ["http://localhost:3000"];
 
 // Middlewares
 app.use(responseUtilities);
