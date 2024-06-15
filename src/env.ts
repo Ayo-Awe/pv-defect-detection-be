@@ -7,7 +7,7 @@ export const envSchema = z.object({
   S3_ACCESS_KEY: z.string(),
   S3_SECRET_KEY: z.string(),
   ML_SERVER_URL: z.string(),
-  INNGEST_SIGNATURE_KEY: z.string(),
+  INNGEST_SIGNING_KEY: z.string(),
   INNGEST_EVENT_KEY: z.string(),
 });
 
