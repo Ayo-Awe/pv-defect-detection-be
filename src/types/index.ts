@@ -21,7 +21,7 @@ declare global {
       ): Response;
     }
     export interface Request {
-      user?: { id: number; email: string };
+      user?: { id: number; email: string; detectionSetCounter: number };
     }
   }
   namespace NodeJS {

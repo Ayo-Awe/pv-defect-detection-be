@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "detection_set_counter" integer DEFAULT 0 NOT NULL;

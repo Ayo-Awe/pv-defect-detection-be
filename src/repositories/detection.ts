@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import db from "../db";
-import { detections } from "../db/schema";
+import { detections, users } from "../db/schema";
 
 export type NewDetectionSet = {
   name: string;
@@ -22,12 +22,19 @@ export class DetectionSetRepository {
   }
 
   async create(data: NewDetectionSet) {
-    const [detection] = await this.database
-      .insert(detections)
-      .values(data)
-      .returning();
+    return await this.database.transaction(async (tx) => {
+      const [detection] = await this.database
+        .insert(detections)
+        .values(data)
+        .returning();
 
-    return detection;
+      await this.database
+        .update(users)
+        .set({ detectionSetCounter: sql`${users.detectionSetCounter} + 1` })
+        .where(eq(users.id, data.userId));
+
+      return detection;
+    });
   }
 
   async getById(userId: number, id: number) {

@@ -36,7 +36,7 @@ class DetectionSetController {
 
       // Create new detection set
       const detectionSetPayload: NewDetectionSet = {
-        name: req.body.name || `Detection Set ${1}`,
+        name: req.body.name || `Detection Set ${req.user!.detectionSetCounter}`,
         totalImages: files.length,
         userId: req.user?.id || 2,
       };

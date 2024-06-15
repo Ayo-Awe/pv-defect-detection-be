@@ -25,6 +25,7 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull(),
   password: varchar("password", { length: 100 }).notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  detectionSetCounter: integer("detection_set_counter").default(0).notNull(),
 });
 
 export const detections = pgTable("detections", {

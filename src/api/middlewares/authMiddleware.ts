@@ -30,7 +30,7 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     };
 
     const user = await db.query.users.findFirst({
-      columns: { id: true, email: true },
+      columns: { id: true, email: true, detectionSetCounter: true },
       where: eq(users.id, payload.uid),
     });
 
