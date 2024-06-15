@@ -2,9 +2,12 @@ import { Inngest } from "inngest";
 import { ImageRepository } from "../repositories/image";
 import db from "../db";
 import { DefectPrediction } from "../db/schema";
-import { randomInt } from "crypto";
 import { DetectionSetRepository } from "../repositories/detection";
 import { ReportRepository } from "../repositories/report";
+import download from "download";
+import axios from "axios";
+import FormData from "form-data";
+import { createReadStream, fstat, readFile } from "fs";
 
 export const inngest = new Inngest({
   id: "pv-detection",
@@ -43,22 +46,30 @@ export const predictDefectInPV = inngest.createFunction(
   async ({ event, step }) => {
     const imageRepo = new ImageRepository(db);
 
-    const predictions: DefectPrediction[] = [
-      {
-        class: "hotspot",
-        x: 30,
-        y: 10,
-        w: 12,
-        h: randomInt(0, 30),
-      },
-      {
-        class: "snail-trail",
-        x: 30,
-        y: randomInt(0, 30),
-        w: 12,
-        h: 15,
-      },
-    ];
+    const image = await step.run(
+      "fetch image data from database",
+      async function () {
+        return await imageRepo.getById(event.data.image.id);
+      }
+    );
+
+    if (!image) throw new Error("Image not found");
+
+    const predictions = await step.run("run ML predictions", async function () {
+      const imgRes = await axios.get(image.imageUrl, {
+        responseType: "stream",
+      });
+
+      const formData = new FormData();
+      formData.append("file", imgRes.data, image.originalFilename);
+
+      const response = await axios.post<{
+        predictions: DefectPrediction[];
+      }>(process.env.ML_SERVER_URL + "/predict", formData, {
+        ...formData.getHeaders(),
+      });
+      return response.data.predictions;
+    });
 
     await step.run("save-predictions", async () => {
       return imageRepo.setDefectPredictions(event.data.image.id, predictions);
