@@ -9,7 +9,8 @@
     "build": "tsc",
     "db:migrate": "ts-node ./src/db/migrate",
     "db:generate": "drizzle-kit generate:pg",
-    "build:production": "npm install --production=false && npm run build && npm ci"
+    "build:production": "npm install --production=false && npm run build && npm ci",
+    "heroku-postbuild": "npm run build:production"
   },
   "keywords": [],
   "author": "",
