@@ -150,8 +150,20 @@ export const generateReport = inngest.createFunction(
   }
 );
 
+export const pingMLServer = inngest.createFunction(
+  { id: "ping ml server" },
+  { cron: "*/2 * * * *" },
+  async () => {
+    const response = await axios.get<{ status: boolean }>(
+      process.env.ML_SERVER_URL + "/status"
+    );
+    return response.data.status;
+  }
+);
+
 export const functions = [
   predictDefectInPV,
   predictDetectionSetDefects,
   generateReport,
+  pingMLServer,
 ];
