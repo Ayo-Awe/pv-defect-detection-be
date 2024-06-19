@@ -41,7 +41,7 @@ export class DetectionSetRepository {
     return this.database.query.detections.findFirst({
       where: (detections, { eq, and }) =>
         and(eq(detections.userId, userId), eq(detections.id, id)),
-      with: { report: true },
+      with: { report: true, images: true },
     });
   }
 
