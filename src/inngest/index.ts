@@ -85,16 +85,12 @@ export const predictDefectInPV = inngest.createFunction(
             event.data.image.detectionId
           );
 
-          if (detectionSet.totalPredictedImages == detectionSet.totalImages) {
-            return await detectionSetRepo.markAsDone(detectionSet.id);
-          }
-
           return detectionSet;
         });
       }
     );
 
-    if (detectionSet.status === "done") {
+    if (detectionSet.totalPredictedImages == detectionSet.totalImages) {
       await step.sendEvent("detection-set-completed", {
         name: "app/detection-set.completed",
         data: {
@@ -145,6 +141,8 @@ export const generateReport = inngest.createFunction(
         defectClassAggregate
       );
     });
+    const detectionSetRepo = new DetectionSetRepository(db);
+    await detectionSetRepo.markAsDone(event.data.detectionSet.id);
 
     return report;
   }
