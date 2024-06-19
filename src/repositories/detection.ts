@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import db from "../db";
 import { detections, users } from "../db/schema";
 
@@ -71,7 +71,8 @@ export class DetectionSetRepository {
   async getAllByUser(userId: number) {
     return this.database.query.detections.findMany({
       where: (detections, { eq, and }) => and(eq(detections.userId, userId)),
-      with: { report: true },
+      with: { report: true, images: true },
+      orderBy: [desc(detections.createdAt)],
     });
   }
 }

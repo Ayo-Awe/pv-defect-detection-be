@@ -65,9 +65,17 @@ export const reports = pgTable("reports", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const detectionSetRelations = relations(detections, ({ one }) => ({
+export const detectionSetRelations = relations(detections, ({ one, many }) => ({
   report: one(reports, {
     fields: [detections.reportId],
     references: [reports.id],
+  }),
+  images: many(images),
+}));
+
+export const imagesRelations = relations(images, ({ one }) => ({
+  detectionSet: one(detections, {
+    fields: [images.detectionId],
+    references: [detections.id],
   }),
 }));
